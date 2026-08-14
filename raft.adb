@@ -132,7 +132,7 @@ package body Raft is
       -- 3. & 4. Append any new entries not already in the log
       if Args.Entry_Present then
          Node.Log_Length := Args.Prev_Log_Index + 1;
-         Node.Log(Node.Log_Length) := Args.Entry;
+         Node.Log(Node.Log_Length) := Args.Log_Entry_Data;
       end if;
 
       -- 5. If leaderCommit > commitIndex, set commitIndex = min(leaderCommit, index of last new entry)
