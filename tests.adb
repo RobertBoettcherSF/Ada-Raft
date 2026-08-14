@@ -107,7 +107,7 @@ begin
    AE_Args.Prev_Log_Index := 0;
    AE_Args.Prev_Log_Term := 0;
    AE_Args.Entry_Present := False;
-   AE_Args.Entry := (Term => 0, Command => 0);
+   AE_Args.Log_Entry_Data := (Term => 0, Command => 0);
    AE_Args.Leader_Commit := 0;
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  9.1 Assert Heartbeat resets election ticks");
@@ -132,7 +132,7 @@ begin
    AE_Args.Prev_Log_Index := 0;
    AE_Args.Prev_Log_Term := 0;
    AE_Args.Entry_Present := True;
-   AE_Args.Entry := (Term => 3, Command => 99);
+   AE_Args.Log_Entry_Data := (Term => 3, Command => 99);
    AE_Args.Leader_Commit := 0;
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  11.1 Assert successful append");
@@ -150,7 +150,7 @@ begin
    AE_Args.Prev_Log_Index := 2;
    AE_Args.Prev_Log_Term := 3;
    AE_Args.Entry_Present := True;
-   AE_Args.Entry := (Term => 3, Command => 100);
+   AE_Args.Log_Entry_Data := (Term => 3, Command => 100);
    AE_Args.Leader_Commit := 0;
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  12.1 Assert PrevLogIndex check rejected the entry");
@@ -164,7 +164,7 @@ begin
    AE_Args.Prev_Log_Index := 1;
    AE_Args.Prev_Log_Term := 3;
    AE_Args.Entry_Present := True;
-   AE_Args.Entry := (Term => 3, Command => 100);
+   AE_Args.Log_Entry_Data := (Term => 3, Command => 100);
    AE_Args.Leader_Commit := 2;
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  13.1 Assert successful append at index 2");
@@ -183,7 +183,7 @@ begin
    AE_Args.Prev_Log_Index := 0;
    AE_Args.Prev_Log_Term := 0;
    AE_Args.Entry_Present := False;
-   AE_Args.Entry := (Term => 0, Command => 0);
+   AE_Args.Log_Entry_Data := (Term => 0, Command => 0);
    AE_Args.Leader_Commit := 0;
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  14.1 Assert Leader reverted to Follower");
