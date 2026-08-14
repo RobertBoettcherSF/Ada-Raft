@@ -34,9 +34,7 @@ begin
 
    -- TEST 3
    Put_Line ("TEST 3 - Election Timeout Transition");
-   for I in 1 .. 9 loop
-      Tick (My_Node);
-   end loop;
+   for I in 1 .. 9 loop Tick (My_Node); end loop;
    Put_Line ("  3.1 Assert Role changed to Candidate upon timeout");
    Assert (My_Node.Role = Candidate);
    Put_Line ("  3.2 Assert Term incremented");
@@ -53,12 +51,7 @@ begin
 
    -- TEST 5
    Put_Line ("TEST 5 - Receive RequestVote from stale term");
-   RV_Args := (
-      Term         => 0,
-      Candidate_Id => 2,
-      Last_Log_Index => 0,
-      Last_Log_Term  => 0
-   );
+   RV_Args := (Term => 0, Candidate_Id => 2, Last_Log_Index => 0, Last_Log_Term => 0);
    Handle_Request_Vote (My_Node, RV_Args, RV_Res);
    Put_Line ("  5.1 Assert Vote Rejected");
    Assert (not RV_Res.Vote_Granted);
@@ -66,12 +59,7 @@ begin
 
    -- TEST 6
    Put_Line ("TEST 6 - Receive RequestVote from newer term");
-   RV_Args := (
-      Term         => 2,
-      Candidate_Id => 3,
-      Last_Log_Index => 0,
-      Last_Log_Term  => 0
-   );
+   RV_Args := (Term => 2, Candidate_Id => 3, Last_Log_Index => 0, Last_Log_Term => 0);
    Handle_Request_Vote (My_Node, RV_Args, RV_Res);
    Put_Line ("  6.1 Assert Vote Granted");
    Assert (RV_Res.Vote_Granted);
@@ -83,12 +71,7 @@ begin
 
    -- TEST 7
    Put_Line ("TEST 7 - Double Voting Prevention (Same Term)");
-   RV_Args := (
-      Term         => 2,
-      Candidate_Id => 2,
-      Last_Log_Index => 0,
-      Last_Log_Term  => 0
-   );
+   RV_Args := (Term => 2, Candidate_Id => 2, Last_Log_Index => 0, Last_Log_Term => 0);
    Handle_Request_Vote (My_Node, RV_Args, RV_Res);
    Put_Line ("  7.1 Assert second vote in same term rejected");
    Assert (not RV_Res.Vote_Granted);
@@ -97,9 +80,7 @@ begin
    -- TEST 8
    Put_Line ("TEST 8 - Reaching Majority becomes Leader");
    Initialize (My_Node, Id => 1, Nodes_Count => 3);
-   for I in 1 .. 10 loop
-      Tick (My_Node);
-   end loop;
+   for I in 1 .. 10 loop Tick (My_Node); end loop;
    RV_Res := (Term => 1, Vote_Granted => True);
    Receive_Vote_Reply (My_Node, RV_Res);
    Put_Line ("  8.1 Assert 2/3 votes -> Leader Role");
@@ -111,15 +92,7 @@ begin
    Initialize (My_Node, Id => 1, Nodes_Count => 3);
    My_Node.Current_Term := 1;
    My_Node.Current_Ticks := 5;
-   AE_Args := (
-      Term           => 1,
-      Leader_Id      => 2,
-      Prev_Log_Index => 0,
-      Prev_Log_Term  => 0,
-      Entry_Present  => False,
-      Entry          => (Term => 0, Command => 0),
-      Leader_Commit  => 0
-   );
+   AE_Args := (Term => 1, Leader_Id => 2, Prev_Log_Index => 0, Prev_Log_Term => 0, Entry_Present => False, Entry => (Term => 0, Command => 0), Leader_Commit => 0);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  9.1 Assert Heartbeat resets election ticks");
    Assert (My_Node.Current_Ticks = 0);
@@ -130,7 +103,7 @@ begin
    -- TEST 10
    Put_Line ("TEST 10 - AppendEntries from stale leader");
    My_Node.Current_Term := 3;
-   AE_Args.Term := 2;
+   AE_Args := (Term => 2, Leader_Id => 2, Prev_Log_Index => 0, Prev_Log_Term => 0, Entry_Present => False, Entry => (Term => 0, Command => 0), Leader_Commit => 0);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  10.1 Assert stale leader request rejected");
    Assert (not AE_Res.Success);
@@ -138,15 +111,7 @@ begin
 
    -- TEST 11
    Put_Line ("TEST 11 - Single Log Entry Append");
-   AE_Args := (
-      Term           => 3,
-      Leader_Id      => 2,
-      Prev_Log_Index => 0,
-      Prev_Log_Term  => 0,
-      Entry_Present  => True,
-      Entry          => (Term => 3, Command => 99),
-      Leader_Commit  => 0
-   );
+   AE_Args := (Term => 3, Leader_Id => 2, Prev_Log_Index => 0, Prev_Log_Term => 0, Entry_Present => True, Entry => (Term => 3, Command => 99), Leader_Commit => 0);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  11.1 Assert successful append");
    Assert (AE_Res.Success);
@@ -158,15 +123,7 @@ begin
 
    -- TEST 12
    Put_Line ("TEST 12 - PrevLogIndex mismatch Rejection");
-   AE_Args := (
-      Term           => 3,
-      Leader_Id      => 2,
-      Prev_Log_Index => 2,
-      Prev_Log_Term  => 3,
-      Entry_Present  => True,
-      Entry          => (Term => 3, Command => 100),
-      Leader_Commit  => 0
-   );
+   AE_Args := (Term => 3, Leader_Id => 2, Prev_Log_Index => 2, Prev_Log_Term => 3, Entry_Present => True, Entry => (Term => 3, Command => 100), Leader_Commit => 0);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  12.1 Assert PrevLogIndex check rejected the entry");
    Assert (not AE_Res.Success);
@@ -174,15 +131,7 @@ begin
 
    -- TEST 13
    Put_Line ("TEST 13 - Commit Index Advancement");
-   AE_Args := (
-      Term           => 3,
-      Leader_Id      => 2,
-      Prev_Log_Index => 1,
-      Prev_Log_Term  => 3,
-      Entry_Present  => True,
-      Entry          => (Term => 3, Command => 100),
-      Leader_Commit  => 2
-   );
+   AE_Args := (Term => 3, Leader_Id => 2, Prev_Log_Index => 1, Prev_Log_Term => 3, Entry_Present => True, Entry => (Term => 3, Command => 100), Leader_Commit => 2);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  13.1 Assert successful append at index 2");
    Assert (AE_Res.Success);
@@ -195,15 +144,7 @@ begin
    Initialize (My_Node, Id => 1, Nodes_Count => 3);
    My_Node.Role := Leader;
    My_Node.Current_Term := 3;
-   AE_Args := (
-      Term           => 4,
-      Leader_Id      => 2,
-      Prev_Log_Index => 0,
-      Prev_Log_Term  => 0,
-      Entry_Present  => False,
-      Entry          => (Term => 0, Command => 0),
-      Leader_Commit  => 0
-   );
+   AE_Args := (Term => 4, Leader_Id => 2, Prev_Log_Index => 0, Prev_Log_Term => 0, Entry_Present => False, Entry => (Term => 0, Command => 0), Leader_Commit => 0);
    Handle_Append_Entries (My_Node, AE_Args, AE_Res);
    Put_Line ("  14.1 Assert Leader reverted to Follower");
    Assert (My_Node.Role = Follower);
