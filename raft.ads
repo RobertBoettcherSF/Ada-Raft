@@ -55,7 +55,7 @@ package Raft is
       Prev_Log_Index : Log_Index;
       Prev_Log_Term  : Term_ID;
       Entry_Present  : Boolean;
-      Entry          : Log_Entry;
+      Log_Entry_Data : Log_Entry;
       Leader_Commit  : Log_Index;
    end record;
 
